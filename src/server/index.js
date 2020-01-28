@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
+const cors = require('koa-cors');
 
 const indexRoutes = require('./routes/index');
 const profilesRoutes = require('./routes/profiles');
@@ -7,6 +8,7 @@ const profilesRoutes = require('./routes/profiles');
 const app = new Koa();
 const PORT = process.env.PORT || 4242;
 
+app.use(cors());
 app.use(bodyParser());
 app.use(indexRoutes.routes());
 app.use(profilesRoutes.routes());
