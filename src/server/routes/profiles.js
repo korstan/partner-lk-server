@@ -2,68 +2,44 @@ const Router = require('koa-router');
 const queries = require('../db/queries/profiles');
 
 const router = new Router();
-const BASE_URL = `/api/v1/profiles`;
+const BASE_URL = `/api/profiles`;
 
-router.get(BASE_URL, async ctx => {
-  try {
-    const profiles = await queries.getAllProfiles();
-    ctx.body = {
-      status: 'success',
-      data: profiles,
-    };
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-router.get(`${BASE_URL}/:inn`, async ctx => {
-  try {
-    const profile = await queries.getSingleProfile(ctx.params.inn);
-    if (profile.length) {
-      ctx.body = {
-        status: 'success',
-        data: profile,
-      };
-    } else {
-      ctx.status = 404;
-      ctx.body = {
-        status: 'error',
-        message: 'That profile does not exist.',
-      };
+router.get(`${BASE_URL}`, async ctx => {
+  console.log(ctx.req.user);
+  if (ctx.isAuthenticated()) {
+    try {
+      const profile = await queries.getSingleProfile(ctx.params.email);
+      if (profile.length) {
+        ctx.body = {
+          status: 'success',
+          data: profile,
+        };
+      } else {
+        ctx.status = 404;
+        ctx.body = {
+          status: 'error',
+          message: 'That profile does not exist.',
+        };
+      }
+    } catch (err) {
+      console.log(err);
     }
-  } catch (err) {
-    console.log(err);
-  }
-});
-
-router.post(`${BASE_URL}`, async ctx => {
-  try {
-    const profile = await queries.addProfile(ctx.request.body);
-    if (profile.length) {
-      ctx.status = 201;
-      ctx.body = {
-        status: 'success',
-        data: profile,
-      };
-    } else {
-      ctx.status = 400;
-      ctx.body = {
-        status: 'error',
-        message: 'Something is wrong with request body',
-      };
-    }
-  } catch (err) {
-    ctx.status = 400;
+  } else {
+    ctx.status = 401;
     ctx.body = {
       status: 'error',
-      message: err.message || 'An error has occured.',
+      message: 'Authentication failed',
     };
   }
 });
 
-router.put(`${BASE_URL}/:inn`, async ctx => {
+router.put(`${BASE_URL}/:email`, async ctx => {
+  if (ctx.isAuthenticated()) {
     try {
-      const profile = await queries.updateProfile(ctx.params.inn, ctx.request.body);
+      const profile = await queries.updateProfile(
+        ctx.params.email,
+        ctx.request.body,
+      );
       if (profile.length) {
         ctx.status = 200;
         ctx.body = {
@@ -84,6 +60,13 @@ router.put(`${BASE_URL}/:inn`, async ctx => {
         message: err.message || 'An error has occured.',
       };
     }
-  });
+  } else {
+    ctx.status = 401;
+    ctx.body = {
+      status: 'error',
+      message: 'Authentication failed',
+    };
+  }
+});
 
 module.exports = router;

@@ -1,13 +1,9 @@
 const knex = require('../connection');
 
-function getAllProfiles() {
-  return knex('profiles').select('*');
-}
-
-function getSingleProfile(inn) {
+function getSingleProfile(email) {
   return knex('profiles')
     .select('*')
-    .where({ inn });
+    .where({ email });
 }
 
 function addProfile(profile) {
@@ -16,15 +12,14 @@ function addProfile(profile) {
     .returning('*');
 }
 
-function updateProfile(inn, profile) {
+function updateProfile(email, profile) {
     return knex('profiles')
     .update(profile)
-    .where({ inn })
+    .where({ email })
     .returning('*');
 }
 
 module.exports = {
-  getAllProfiles,
   getSingleProfile,
   addProfile,
   updateProfile,

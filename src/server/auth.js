@@ -8,12 +8,12 @@ function comparePasswords(userPassword, databasePassword) {
 }
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.email);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser((email, done) => {
   return knex('users')
-    .where({ id })
+    .where({ email })
     .first()
     .then(user => {
       done(null, user);
