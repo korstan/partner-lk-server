@@ -8,7 +8,9 @@ router.post('/auth/register', async ctx => {
   const user = await queries.addUser(ctx.request.body);
   return passport.authenticate('local', (err, user, info, status) => {
     if (user) {
-      ctx.login(user);
+      ctx.status = 200;
+      ctx.body = {status: 'success (cookies sent)'}
+      return ctx.login(user);
     } else {
       ctx.status = 400;
       ctx.body = { status: 'error' };
@@ -19,7 +21,9 @@ router.post('/auth/register', async ctx => {
 router.post('/auth/login', async ctx => {
   return passport.authenticate('local', (err, user, info, status) => {
     if (user) {
-      ctx.login(user);
+      ctx.status = 200;
+      ctx.body = {status: 'success (cookies sent)'}
+      return ctx.login(user);
     } else {
       ctx.status = 400;
       ctx.body = { status: 'error' };
