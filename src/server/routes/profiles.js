@@ -1,72 +1,34 @@
 const Router = require('koa-router');
-const queries = require('../db/queries/profiles');
-
+const { getSingleProfile, updateProfile } = require('../db/queries/profiles');
+const profilesMapper = require('../db/mappers/profiles');
+const passport = require('koa-passport');
 const router = new Router();
 const BASE_URL = `/api/profiles`;
 
 router.get(`${BASE_URL}`, async ctx => {
-  console.log(ctx.req.user);
-  if (ctx.isAuthenticated()) {
-    try {
-      const profile = await queries.getSingleProfile(ctx.params.email);
-      if (profile.length) {
-        ctx.body = {
-          status: 'success',
-          data: profile,
-        };
-      } else {
-        ctx.status = 404;
-        ctx.body = {
-          status: 'error',
-          message: 'That profile does not exist.',
-        };
-      }
-    } catch (err) {
-      console.log(err);
+  return passport.authenticate('jwt', async (err, user) => {
+    if (user) {
+      const profile = await getSingleProfile(user.email);
+      ctx.status = 200;
+      ctx.body = profile;
+    } else {
+      ctx.status = 401;
+      ctx.body = { message: err };
     }
-  } else {
-    ctx.status = 401;
-    ctx.body = {
-      status: 'error',
-      message: 'Authentication failed',
-    };
-  }
+  })(ctx);
 });
 
-router.put(`${BASE_URL}/:email`, async ctx => {
-  if (ctx.isAuthenticated()) {
-    try {
-      const profile = await queries.updateProfile(
-        ctx.params.email,
-        ctx.request.body,
-      );
-      if (profile.length) {
-        ctx.status = 200;
-        ctx.body = {
-          status: 'success',
-          data: profile,
-        };
-      } else {
-        ctx.status = 404;
-        ctx.body = {
-          status: 'error',
-          message: 'This profile does not exist',
-        };
-      }
-    } catch (err) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 'error',
-        message: err.message || 'An error has occured.',
-      };
+router.put(`${BASE_URL}`, async ctx => {
+  return passport.authenticate('jwt', async (err, user) => {
+    if (user) {
+      const updatedProfile = await updateProfile(user.email, ctx.request.body);
+      ctx.status = 200;
+      ctx.body = profilesMapper.getApiObject( updatedProfile[0]);
+    } else {
+      ctx.status = 401;
+      ctx.body = { message: err };
     }
-  } else {
-    ctx.status = 401;
-    ctx.body = {
-      status: 'error',
-      message: 'Authentication failed',
-    };
-  }
+  })(ctx);
 });
 
 module.exports = router;

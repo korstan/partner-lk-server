@@ -1,7 +1,11 @@
+const config = require('../config');
 const passport = require('koa-passport');
 const knex = require('./db/connection');
 const bcrypt = require('bcryptjs');
+const { findUserByEmail } = require('./db/queries/users');
 const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 function comparePasswords(userPassword, databasePassword) {
   return bcrypt.compareSync(userPassword, databasePassword);
@@ -12,9 +16,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((email, done) => {
-  return knex('users')
-    .where({ email })
-    .first()
+  return findUserByEmail(email)
     .then(user => {
       done(null, user);
     })
@@ -28,11 +30,10 @@ passport.use(
     {
       usernameField: 'email',
       passwordField: 'password',
+      session: 'false',
     },
     (email, password, done) => {
-      knex('users')
-        .where({ email })
-        .first()
+      findUserByEmail(email)
         .then(user => {
           if (!user) return done(null, false);
           if (!comparePasswords(password, user.password)) {
@@ -43,6 +44,28 @@ passport.use(
         })
         .catch(err => {
           return done(err);
+        });
+    },
+  ),
+);
+
+passport.use(
+  new JwtStrategy(
+    {
+      jwtFromRequest: ExtractJwt.fromHeader('authorization'),
+      secretOrKey: config.SECRET,
+    },
+    (payload, done) => {
+      return findUserByEmail(payload.sub)
+        .then(user => {
+          if (user) {
+            return done(null, user);
+          }
+          return done(null, false);
+        })
+        .catch(err => {
+          console.log(err);
+          done(err, false);
         });
     },
   ),

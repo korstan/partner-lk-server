@@ -1,9 +1,10 @@
 const knex = require('../connection');
+const mapper = require('../mappers/profiles');
 
 function getSingleProfile(email) {
   return knex('profiles')
     .select('*')
-    .where({ email });
+    .where({ email }).first().then((profile) => mapper.getApiObject(profile));
 }
 
 function addProfile(profile) {
@@ -14,7 +15,7 @@ function addProfile(profile) {
 
 function updateProfile(email, profile) {
     return knex('profiles')
-    .update(profile)
+    .update(mapper.getDbObject(profile))
     .where({ email })
     .returning('*');
 }

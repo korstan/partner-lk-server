@@ -12,6 +12,13 @@ function addUser({email, password}) {
     .returning('*');
 }
 
+function findUserByEmail(email) {
+  return knex('users')
+    .where({ email })
+    .first();
+}
+
 module.exports = {
   addUser,
+  findUserByEmail,
 };
