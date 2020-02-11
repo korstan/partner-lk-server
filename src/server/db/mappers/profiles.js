@@ -7,36 +7,34 @@ const getApiObject = (dbProfile) => ({
   organization: dbProfile.organization,
   inn: dbProfile.inn,
   position: dbProfile.position,
-  contact: {
-    phone: dbProfile.contact_phone,
-    country: dbProfile.contact_country,
-    city: dbProfile.contact_city,
-    street: dbProfile.contact_street,
-    building: dbProfile.contact_building,
-    office: dbProfile.contact_office,
-  },
-  extra: {
-    website: dbProfile.extra_website,
-    about: dbProfile.extra_about,
-    interests: dbProfile.extra_interests,
-    logo: dbProfile.extra_logo,
-  },
+  contactPhone: dbProfile.contact_phone,
+  contactAddress: dbProfile.contact_address,
+  contactCountry: dbProfile.contact_country,
+  contactCity: dbProfile.contact_city,
+  contactStreet: dbProfile.contact_street,
+  contactBuilding: dbProfile.contact_building,
+  contactOffice: dbProfile.contact_office,
+  extraWebsite: dbProfile.extra_website,
+  extraAbout: dbProfile.extra_about,
+  extraInterests: dbProfile.extra_interests,
+  extraLogo: dbProfile.extra_logo,
 });
 
 const getDbObject = (apiProfile) => ({
-  contact_phone: apiProfile.contact.phone,
-  contact_country: apiProfile.contact.country,
-  contact_city: apiProfile.contact.city,
-  contact_street: apiProfile.contact.street,
-  contact_building: apiProfile.contact.building,
-  contact_office: apiProfile.contact.office,
-  extra_website: apiProfile.extra.website,
-  extra_about: apiProfile.extra.about,
-  extra_interests: apiProfile.extra.interests,
-  extra_logo: apiProfile.extra.logo,
-})
+  contact_phone: apiProfile.contactPhone,
+  contact_address: apiProfile.contactAddress,
+  contact_country: apiProfile.contactCountry,
+  contact_city: apiProfile.contactCity,
+  contact_street: apiProfile.contactStreet,
+  contact_building: apiProfile.contactBuilding,
+  contact_office: apiProfile.contactOffice,
+  extra_website: apiProfile.extraWebsite,
+  extra_about: apiProfile.extraAbout,
+  extra_interests: apiProfile.extraInterests,
+  extra_logo: apiProfile.extraLogo,
+});
 
 module.exports = {
   getApiObject,
-  getDbObject
-} 
+  getDbObject,
+};

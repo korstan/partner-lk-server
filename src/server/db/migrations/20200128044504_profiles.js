@@ -11,6 +11,7 @@ exports.up = function(knex) {
         table.string('inn').notNullable().unique();
         table.string('position').notNullable();
         table.string('contact_phone');
+        table.string('contact_address');
         table.string('contact_country');
         table.string('contact_city');
         table.string('contact_street');
