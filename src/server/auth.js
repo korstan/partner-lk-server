@@ -1,6 +1,4 @@
-const config = require('../config');
 const passport = require('koa-passport');
-const knex = require('./db/connection');
 const bcrypt = require('bcryptjs');
 const { findUserByEmail } = require('./db/queries/users');
 const LocalStrategy = require('passport-local').Strategy;
@@ -53,7 +51,7 @@ passport.use(
   new JwtStrategy(
     {
       jwtFromRequest: ExtractJwt.fromHeader('authorization'),
-      secretOrKey: config.SECRET,
+      secretOrKey: process.env.SECRET,
     },
     (payload, done) => {
       return findUserByEmail(payload.sub)
