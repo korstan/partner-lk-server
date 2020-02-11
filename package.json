@@ -4,7 +4,7 @@
   "description": "��#\u0000 \u0000p\u0000a\u0000r\u0000t\u0000n\u0000e\u0000r\u0000-\u0000l\u0000k\u0000-\u0000s\u0000e\u0000r\u0000v\u0000e\u0000r\u0000\r\u0000 \u0000",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/server/index.js",
+    "start": "node ./src/server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
