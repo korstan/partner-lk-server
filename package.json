@@ -31,5 +31,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^7.17.1"
+  },
+  "engines": {
+    "node": "13.x"
   }
 }
