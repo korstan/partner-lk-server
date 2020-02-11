@@ -1,14 +1,13 @@
 const Router = require('koa-router');
 const passport = require('koa-passport');
 const jwt = require('jwt-simple');
-const config = require('../../config');
 const { addUser } = require('../db/queries/users');
 const { addProfile } = require('../db/queries/profiles');
 const router = new Router();
 
 const getUserToken = user => {
   const timeStamp = new Date().getTime();
-  return jwt.encode({ sub: user.email, iat: timeStamp }, config.SECRET);
+  return jwt.encode({ sub: user.email, iat: timeStamp }, process.env.SECRET);
 };
 
 router.post('/auth/register', async ctx => {
