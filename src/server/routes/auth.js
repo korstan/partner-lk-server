@@ -40,7 +40,7 @@ router.post('/auth/login', async (ctx) => {
       ctx.body = { token: getUserToken(user) };
     } else {
       ctx.status = 400;
-      ctx.body = { status: 'error' };
+      ctx.body = { message: 'Wrong email or password' };
     }
   })(ctx);
 });
