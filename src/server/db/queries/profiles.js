@@ -10,24 +10,19 @@ function getSingleProfile(email) {
 }
 
 function addProfile(profile) {
-  try {
-    return knex('profiles')
-      .insert(profile)
-      .returning('*');
-  } catch (error) {
-    throw { name: 'AddProfileError', message: error.message };
-  }
+  return knex('profiles')
+    .insert(profile)
+    .returning('*');
 }
 
 function updateProfile(email, profile) {
-  try {
-    return knex('profiles')
-      .update(mapper.getDbObject(profile))
-      .where({ email })
-      .returning('*');
-  } catch (error) {
-    throw { name: 'UpdateProfileError', message: error.message };
-  }
+  return knex('profiles')
+    .update(mapper.getDbObject(profile))
+    .where({ email })
+    .returning('*')
+    .catch((err) => {
+      throw { name: 'UpdateProfileError', message: error.message };
+    });
 }
 
 module.exports = {

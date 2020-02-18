@@ -6,11 +6,20 @@ const profileQuery = require('./profiles');
 function registerNewUser(user, profile) {
   return knex.transaction(async (trx) => {
     try {
-      const newUser = await userQuery.addUser(user).transacting(trx);
-      await profileQuery.addProfile(profile).transacting(trx);
+      const newUser = await userQuery
+        .addUser(user)
+        .transacting(trx)
+        .catch((error) => {
+          throw { name: 'AddUserError', message: error.message };
+        });
+      await profileQuery
+        .addProfile(profile)
+        .transacting(trx)
+        .catch((error) => {
+          throw { name: 'AddProfileError', message: error.message };
+        });
       return newUser;
-    }
-    catch(error) {
+    } catch (error) {
       throw error;
     }
   });
@@ -18,4 +27,4 @@ function registerNewUser(user, profile) {
 
 module.exports = {
   registerNewUser,
-}
+};
