@@ -20,7 +20,7 @@ function updateProfile(email, profile) {
     .update(mapper.getDbObject(profile))
     .where({ email })
     .returning('*')
-    .catch((err) => {
+    .catch((error) => {
       throw { name: 'UpdateProfileError', message: error.message };
     });
 }

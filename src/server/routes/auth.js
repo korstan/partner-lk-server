@@ -29,7 +29,26 @@ router.post('/auth/register', async (ctx) => {
     ctx.status = 200;
   } catch (err) {
     console.log(err);
-    ctx.status = 500;
+    switch (err.name) {
+      case 'AddUserError':
+        ctx.status = 400;
+        ctx.body = {
+          error: { name: 'EmailError', message: 'Email is already in use' },
+        };
+        break;
+      case 'AddProfileError':
+        ctx.status = 400;
+        ctx.body = {
+          error: { name: 'InnError', message: 'INN is already in use' },
+        };
+        break;
+      default:
+        ctx.status = 500;
+        ctx.body = {
+          error: { name: 'InternalServerError', message: 'Something went wrong on a server' },
+        };
+        break;
+    }
   }
 });
 
