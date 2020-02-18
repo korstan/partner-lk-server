@@ -1,24 +1,19 @@
 const Router = require('koa-router');
 const passport = require('koa-passport');
 const jwt = require('jwt-simple');
-const { addUser } = require('../db/queries/users');
-const { addProfile } = require('../db/queries/profiles');
+const { registerNewUser } = require('../db/queries/common');
 const router = new Router();
 
-const getUserToken = user => {
+const getUserToken = (user) => {
   const timeStamp = new Date().getTime();
   return jwt.encode({ sub: user.email, iat: timeStamp }, process.env.SECRET);
 };
 
-router.post('/auth/register', async ctx => {
+router.post('/auth/register', async (ctx) => {
   try {
     const { body } = ctx.request;
-    const newUser = await addUser({
-      email: body.email,
-      password: body.password,
-    });
-
-    const profile = await addProfile({
+    const user = { email: body.email, password: body.password };
+    const profile = {
       email: body.email,
       lastname: body.lastname,
       firstname: body.firstname,
@@ -27,10 +22,10 @@ router.post('/auth/register', async ctx => {
       organization: body.organization,
       inn: body.inn,
       position: body.position,
-    });
+    };
 
+    const newUser = await registerNewUser(user, profile);
     ctx.body = { token: getUserToken(newUser[0]) };
-
     ctx.status = 200;
   } catch (err) {
     console.log(err);
@@ -38,7 +33,7 @@ router.post('/auth/register', async ctx => {
   }
 });
 
-router.post('/auth/login', async ctx => {
+router.post('/auth/login', async (ctx) => {
   return passport.authenticate('local', (err, user, info, status) => {
     if (user) {
       ctx.status = 200;
@@ -50,7 +45,7 @@ router.post('/auth/login', async ctx => {
   })(ctx);
 });
 
-router.get('/auth/logout', async ctx => {
+router.get('/auth/logout', async (ctx) => {
   if (ctx.isAuthenticated()) {
     ctx.logout();
   } else {
