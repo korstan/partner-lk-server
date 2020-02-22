@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./index.js",
     "debug": "nodemon --inspect ./index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "resetDb": "knex migrate:rollback && knex migrate:latest",
+    "test": "set NODE_ENV=test&& npm run resetDb && mocha --exit"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,10 @@
     "pg": "^7.17.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^7.0.1",
+    "nodemon": "^2.0.2",
+    "nyc": "^15.0.0"
   }
 }

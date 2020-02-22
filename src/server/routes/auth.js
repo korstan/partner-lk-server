@@ -28,7 +28,6 @@ router.post('/auth/register', async (ctx) => {
     ctx.body = { token: getUserToken(newUser[0]) };
     ctx.status = 200;
   } catch (err) {
-    console.log(err);
     switch (err.name) {
       case 'AddUserError':
         ctx.status = 400;
@@ -59,7 +58,7 @@ router.post('/auth/login', async (ctx) => {
       ctx.body = { token: getUserToken(user) };
     } else {
       ctx.status = 400;
-      ctx.body = { message: 'Wrong email or password' };
+      ctx.body = { error: {name: 'CredentialsError', message: 'Wrong email or password'} };
     }
   })(ctx);
 });
