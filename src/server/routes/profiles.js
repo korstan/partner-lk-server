@@ -13,7 +13,7 @@ router.get(`${BASE_URL}`, async ctx => {
       ctx.body = profile;
     } else {
       ctx.status = 401;
-      ctx.body = { message: err };
+      ctx.body = { error: {name: 'UnauthorizedError', message: 'You should be authorized to access this resource' } };
     }
   })(ctx);
 });
@@ -26,7 +26,7 @@ router.put(`${BASE_URL}`, async ctx => {
       ctx.body = profilesMapper.getApiObject( updatedProfile[0]);
     } else {
       ctx.status = 401;
-      ctx.body = { message: err };
+      ctx.body = { error: {name: 'UnauthorizedError', message: 'You should be authorized to access this resource' } };
     }
   })(ctx);
 });
